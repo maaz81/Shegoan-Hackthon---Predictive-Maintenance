@@ -1,34 +1,34 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from rule_engine import rule_analysis
+from ml_model import predict_failure
+from nlp_engine import generate_explanation
 
 app = FastAPI()
 
-class LogRequest(BaseModel):
+class InputData(BaseModel):
     log: str
-
-@app.get("/")
-def home():
-    return {"message": "AI Service Running 🚀"}
+    temp: float
+    vibration: float
+    rpm: float
 
 @app.post("/analyze")
-def analyze(request: LogRequest):
-    log = request.log.lower()
+def analyze(data: InputData):
+    # Rule-based
+    rule_risk, rule_reason = rule_analysis(data.log)
 
-    if "vibration" in log and "temperature" in log:
-        risk = "High"
-        reason = "Mechanical stress detected"
-    elif "vibration" in log:
-        risk = "Medium"
-        reason = "Abnormal vibration"
-    elif "temperature" in log:
-        risk = "Medium"
-        reason = "Overheating risk"
-    else:
-        risk = "Low"
-        reason = "Normal condition"
+    # ML prediction
+    ml_risk = predict_failure(data.temp, data.vibration, data.rpm)
+
+    # Final decision
+    final_risk = "High" if "High" in [rule_risk, ml_risk] else "Low"
+
+    # NLP explanation
+    explanation = generate_explanation(data.log, final_risk)
 
     return {
-        "log": request.log,
-        "risk": risk,
-        "reason": reason
+        "rule_based": rule_risk,
+        "ml_prediction": ml_risk,
+        "final_risk": final_risk,
+        "explanation": explanation
     }
