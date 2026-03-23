@@ -1,14 +1,20 @@
 import Sidebar from "../components/Sidebar";
 import Card from "../components/Card";
+import { motion } from "framer-motion";
 
 const Dashboard = () => {
   return (
-    <div className="flex min-h-screen bg-gray-950 text-white">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="flex min-h-screen bg-gray-950 text-white"
+    >
       <Sidebar />
 
       <div className="flex-1 p-10 space-y-8">
 
-        {/* HEADER */}
+        {/* Header */}
         <div>
           <h1 className="text-2xl font-semibold">Dashboard</h1>
           <p className="text-sm text-gray-400">
@@ -16,17 +22,17 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* CARDS */}
+        {/* Cards */}
         <div className="grid grid-cols-3 gap-6">
           <Card title="Total Machines" value="12" change="+2%" />
           <Card title="Active Alerts" value="3" change="-1%" />
           <Card title="Critical Issues" value="1" change="+0.5%" />
         </div>
 
-        {/* MAIN GRID */}
+        {/* Main Grid */}
         <div className="grid grid-cols-3 gap-6">
 
-          {/* LEFT - CHART */}
+          {/* Chart */}
           <div className="col-span-2 bg-gray-900/60 border border-gray-800 rounded-2xl p-6">
             <h2 className="text-sm text-gray-400 mb-4">
               Machine Health Overview
@@ -37,36 +43,48 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* RIGHT - ALERTS */}
+          {/* Alerts */}
           <div className="bg-gray-900/60 border border-gray-800 rounded-2xl p-6">
             <h2 className="text-sm text-gray-400 mb-4">Recent Alerts</h2>
 
             <div className="space-y-3">
-              <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="p-4 rounded-xl bg-red-500/10 border border-red-500/20"
+              >
                 <p className="text-sm text-red-400">
                   Machine A overheating
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20">
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                className="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20"
+              >
                 <p className="text-sm text-yellow-400">
                   Machine B vibration high
                 </p>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
 
-        {/* AI INSIGHT */}
-        <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-400/20 rounded-2xl p-6">
+        {/* AI Insight */}
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-400/20 rounded-2xl p-6"
+        >
           <h2 className="text-sm text-gray-400 mb-2">AI Insight</h2>
-          <p className="text-gray-200">
+          <p>
             Abnormal vibration detected in Machine A. Maintenance recommended within 5 days.
           </p>
-        </div>
+        </motion.div>
 
       </div>
-    </div>
+    </motion.div>
   );
 };
 
