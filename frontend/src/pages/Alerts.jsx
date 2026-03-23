@@ -1,6 +1,6 @@
 import Sidebar from "../components/Sidebar";
 import { motion } from "framer-motion";
-import { AlertTriangle, Zap, Info, CheckCircle, Filter, Bell } from "lucide-react";
+import { AlertTriangle, Zap, Info, CheckCircle, Filter, Bell, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 const alerts = [
@@ -13,10 +13,10 @@ const alerts = [
 ];
 
 const levelConfig = {
-  critical: { color: "#ff2244", bg: "rgba(255,34,68,0.08)", border: "rgba(255,34,68,0.3)", borderLeft: "#ff2244", icon: Zap, label: "CRITICAL" },
-  warning:  { color: "#ffcc00", bg: "rgba(255,204,0,0.08)",  border: "rgba(255,204,0,0.3)",  borderLeft: "#ffcc00", icon: AlertTriangle, label: "WARNING" },
-  info:     { color: "#00f5ff", bg: "rgba(0,245,255,0.06)",  border: "rgba(0,245,255,0.2)",  borderLeft: "#00f5ff", icon: Info, label: "INFO" },
-  ok:       { color: "#00ff88", bg: "rgba(0,255,136,0.06)",  border: "rgba(0,255,136,0.2)",  borderLeft: "#00ff88", icon: CheckCircle, label: "NOMINAL" },
+  critical: { color: "text-red-600", bg: "bg-red-50", border: "border-red-200", iconBg: "bg-red-100", icon: Zap, label: "CRITICAL", shadow: "shadow-red-50" },
+  warning:  { color: "text-amber-600", bg: "bg-amber-50", border: "border-amber-200", iconBg: "bg-amber-100", icon: AlertTriangle, label: "WARNING", shadow: "shadow-amber-50" },
+  info:     { color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200", iconBg: "bg-blue-100", icon: Info, label: "INFO", shadow: "shadow-blue-50" },
+  ok:       { color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200", iconBg: "bg-emerald-100", icon: CheckCircle, label: "NOMINAL", shadow: "shadow-emerald-50" },
 };
 
 const Alerts = () => {
@@ -31,76 +31,80 @@ const Alerts = () => {
   };
 
   return (
-    <div className="flex min-h-screen robot-grid-bg">
+    <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
 
-      <div className="flex-1 p-8 space-y-6 overflow-y-auto">
+      <div className="flex-1 p-8 space-y-6 overflow-y-auto w-full max-w-[1400px] mx-auto">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
           <div>
-            <p style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "10px", color: "rgba(0,245,255,0.5)", letterSpacing: "3px", marginBottom: "4px" }}>
-              // ALERT MANAGEMENT
-            </p>
-            <h1 style={{ fontFamily: "'Orbitron',monospace", fontSize: "1.5rem", color: "#e0f0ff", fontWeight: 800, letterSpacing: "3px" }}>
-              SYSTEM <span style={{ color: "#ff2244", textShadow: "0 0 16px rgba(255,34,68,0.6)" }}>ALERTS</span>
+            <span className="text-xs font-bold text-red-500 tracking-widest px-2 py-1 bg-red-50 rounded-md border border-red-100 mb-2 inline-block">
+              MODULE :: INCIDENTS
+            </span>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+              SYSTEM <span className="text-red-600 title-font">ALERTS</span>
             </h1>
+            <p className="text-sm font-medium text-slate-500 mt-2">
+              Centralized incident log and sensor anomalies
+            </p>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl"
-               style={{ background: "rgba(255,34,68,0.07)", border: "1px solid rgba(255,34,68,0.2)" }}>
-            <Bell size={14} style={{ color: "#ff2244" }} />
-            <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "11px", color: "#ff2244" }}>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="flex items-center gap-3 px-5 py-3 rounded-xl bg-red-50 border border-red-200 shadow-sm cursor-pointer"
+          >
+            <Bell size={18} className="text-red-600 animate-bounce" />
+            <span className="text-sm font-bold text-red-700 tracking-wide">
               {counts.critical} CRITICAL ACTIVE
             </span>
-          </div>
+          </motion.div>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-6">
           {[
-            { label: "Critical", count: counts.critical, color: "#ff2244", glow: "rgba(255,34,68,0.2)" },
-            { label: "Warning",  count: counts.warning,  color: "#ffcc00", glow: "rgba(255,204,0,0.2)" },
-            { label: "Info",     count: counts.info,     color: "#00f5ff", glow: "rgba(0,245,255,0.2)" },
+            { label: "Critical", count: counts.critical, color: "text-red-600", bg: "bg-red-50", border: "border-red-200" },
+            { label: "Warning",  count: counts.warning,  color: "text-amber-600", bg: "bg-amber-50", border: "border-amber-200" },
+            { label: "Routine",  count: counts.info,     color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200" },
           ].map((s, i) => (
             <motion.div
               key={s.label}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="neon-card corner-bracket p-5 text-center"
-              style={{ borderColor: `${s.color}44` }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className={`p-6 rounded-2xl bg-white border shadow-sm text-center cursor-pointer transition-all ${s.border} hover:shadow-md`}
             >
-              <p style={{ fontFamily: "'Orbitron',monospace", fontSize: "2rem", fontWeight: 900, color: s.color, textShadow: `0 0 20px ${s.glow}` }}>
-                {s.count}
-              </p>
-              <p style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "10px", color: `${s.color}99`, letterSpacing: "2px" }}>
-                {s.label.toUpperCase()}
+              <div className={`w-12 h-12 rounded-full ${s.bg} flex items-center justify-center mx-auto mb-3`}>
+                <span className={`text-2xl font-black title-font ${s.color}`}>{s.count}</span>
+              </div>
+              <p className="text-xs font-bold text-slate-500 tracking-widest uppercase">
+                {s.label}
               </p>
             </motion.div>
           ))}
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-2">
-          <Filter size={13} style={{ color: "rgba(0,245,255,0.5)" }} />
+        <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm w-fit">
+          <Filter size={16} className="text-slate-400 ml-2" />
           {["all", "critical", "warning", "info", "ok"].map(f => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className="neon-btn"
-              style={{
-                background: filter === f ? "rgba(0,245,255,0.15)" : "rgba(0,245,255,0.04)",
-                borderColor: filter === f ? "rgba(0,245,255,0.6)" : "rgba(0,245,255,0.2)",
-                boxShadow: filter === f ? "0 0 12px rgba(0,245,255,0.2)" : "none",
-              }}
+              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
+                filter === f 
+                  ? "bg-slate-800 text-white shadow-md" 
+                  : "bg-slate-50 text-slate-500 border border-slate-200 hover:bg-slate-100 hover:text-slate-800"
+              }`}
             >
-              {f.toUpperCase()}
+              {f}
             </button>
           ))}
         </div>
 
         {/* Alert List */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {filtered.map((a, i) => {
             const cfg = levelConfig[a.level];
             const Icon = cfg.icon;
@@ -109,46 +113,43 @@ const Alerts = () => {
                 key={a.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.07 }}
-                className="rounded-xl p-4 relative overflow-hidden"
-                style={{
-                  background: cfg.bg,
-                  border: `1px solid ${cfg.border}`,
-                  borderLeft: `3px solid ${cfg.borderLeft}`,
-                }}
+                transition={{ delay: i * 0.05 }}
+                whileHover={{ scale: 1.01 }}
+                className={`flex items-start gap-4 p-5 rounded-2xl bg-white border shadow-sm cursor-pointer transition-all ${cfg.border} hover:shadow-md ${cfg.shadow} group`}
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                       style={{ background: `${cfg.color}15`, border: `1px solid ${cfg.color}33` }}>
-                    <Icon size={15} style={{ color: cfg.color, filter: `drop-shadow(0 0 4px ${cfg.color})` }} />
-                  </div>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 border ${cfg.bg} ${cfg.border}`}>
+                  <Icon size={20} className={cfg.color} />
+                </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "10px", color: cfg.color, letterSpacing: "1px" }}>
-                        [{a.id}]
-                      </span>
-                      <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "10px", color: "rgba(0,245,255,0.4)" }}>
-                        {a.machine}
-                      </span>
-                      <span
-                        className="px-2 py-0.5 rounded text-xs"
-                        style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "9px", background: `${cfg.color}15`, color: cfg.color, border: `1px solid ${cfg.color}30`, letterSpacing: "1px" }}
-                      >
-                        {cfg.label}
-                      </span>
-                    </div>
-                    <p style={{ fontFamily: "'Rajdhani',sans-serif", fontWeight: 600, fontSize: "14px", color: "#c0d8e8" }}>
-                      {a.msg}
-                    </p>
-                    <p style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "10px", color: "rgba(0,245,255,0.3)", marginTop: "4px" }}>
-                      SENSOR: {a.sensor}
-                    </p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-1.5">
+                    <span className="text-[10px] font-bold text-slate-400 font-mono bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                      {a.id}
+                    </span>
+                    <span className="text-[11px] font-bold text-slate-600 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
+                      {a.machine}
+                    </span>
+                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider border ${cfg.bg} ${cfg.color} ${cfg.border}`}>
+                      {cfg.label}
+                    </span>
                   </div>
+                  <p className="text-[15px] font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
+                    {a.msg}
+                  </p>
+                  <div className="flex items-center gap-4 mt-2">
+                    <span className="text-[11px] font-medium text-slate-500 font-mono">
+                      <strong className="text-slate-400">SENSOR:</strong> {a.sensor}
+                    </span>
+                  </div>
+                </div>
 
-                  <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "11px", color: "rgba(0,245,255,0.4)", flexShrink: 0 }}>
-                    {a.time}
+                <div className="flex flex-col items-end justify-between h-full">
+                  <span className="text-[11px] font-bold text-slate-400 whitespace-nowrap bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+                    ⏱ {a.time}
                   </span>
+                  <div className="mt-4 w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ChevronRight size={14} className="text-blue-500" />
+                  </div>
                 </div>
               </motion.div>
             );

@@ -12,14 +12,14 @@ const schedule = [
 ];
 
 const priorityCfg = {
-  critical: { color: "#ff2244", glow: "rgba(255,34,68,0.2)", label: "CRITICAL" },
-  warning:  { color: "#ffcc00", glow: "rgba(255,204,0,0.2)",  label: "HIGH" },
-  info:     { color: "#00f5ff", glow: "rgba(0,245,255,0.15)", label: "ROUTINE" },
-  ok:       { color: "#00ff88", glow: "rgba(0,255,136,0.15)", label: "DONE" },
+  critical: { color: "text-red-600", bg: "bg-red-50", border: "border-red-200", label: "CRITICAL" },
+  warning:  { color: "text-amber-600", bg: "bg-amber-50", border: "border-amber-200",  label: "HIGH" },
+  info:     { color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200", label: "ROUTINE" },
+  ok:       { color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200", label: "DONE" },
 };
 
 const statusIcon = { pending: Circle, scheduled: Clock, overdue: AlertCircle, done: CheckCircle };
-const statusColor = { pending: "#ffcc00", scheduled: "#00f5ff", overdue: "#ff2244", done: "#00ff88" };
+const statusColor = { pending: "text-amber-500", scheduled: "text-blue-500", overdue: "text-red-500", done: "text-emerald-500" };
 
 const Maintenance = () => {
   const pending  = schedule.filter(s => s.status === "pending" || s.status === "overdue").length;
@@ -27,55 +27,59 @@ const Maintenance = () => {
   const upcoming = schedule.filter(s => s.status === "scheduled").length;
 
   return (
-    <div className="flex min-h-screen robot-grid-bg">
+    <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
 
-      <div className="flex-1 p-8 space-y-6 overflow-y-auto">
+      <div className="flex-1 p-8 space-y-6 overflow-y-auto w-full max-w-[1400px] mx-auto">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
           <div>
-            <p style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "10px", color: "rgba(0,245,255,0.5)", letterSpacing: "3px", marginBottom: "4px" }}>
-              // WORK ORDER MANAGEMENT
-            </p>
-            <h1 style={{ fontFamily: "'Orbitron',monospace", fontSize: "1.5rem", color: "#e0f0ff", fontWeight: 800, letterSpacing: "3px" }}>
-              MAINTENANCE <span style={{ color: "#00f5ff", textShadow: "0 0 16px rgba(0,245,255,0.7)" }}>SCHEDULER</span>
-            </h1>
-          </div>
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl"
-               style={{ background: "rgba(0,245,255,0.07)", border: "1px solid rgba(0,245,255,0.2)" }}>
-            <Calendar size={14} style={{ color: "#00f5ff" }} />
-            <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "11px", color: "#00f5ff" }}>
-              MARCH 2026
+            <span className="text-xs font-bold text-purple-500 tracking-widest px-2 py-1 bg-purple-50 rounded-md border border-purple-100 mb-2 inline-block">
+              MODULE :: SERVICE
             </span>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+              MAINTENANCE <span className="text-purple-600 title-font">SCHEDULER</span>
+            </h1>
+            <p className="text-sm font-medium text-slate-500 mt-2">
+              Actionable work orders, technician dispatch, and lifecycle management
+            </p>
           </div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="flex items-center gap-3 px-5 py-3 rounded-xl bg-purple-50 border border-purple-200 shadow-sm cursor-pointer hover:bg-purple-100"
+          >
+            <Calendar size={18} className="text-purple-600" />
+            <span className="text-sm font-bold text-purple-700 tracking-wide uppercase">
+              March 2026 Schedule
+            </span>
+          </motion.div>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-6">
           {[
-            { label: "Action Required", count: pending,  color: "#ff2244", icon: AlertCircle },
-            { label: "Upcoming",        count: upcoming, color: "#ffcc00", icon: Clock },
-            { label: "Completed",       count: done,     color: "#00ff88", icon: CheckCircle },
+            { label: "Action Required", count: pending,  color: "text-red-600", bg: "bg-red-50", icon: AlertCircle },
+            { label: "Upcoming Work",   count: upcoming, color: "text-amber-600", bg: "bg-amber-50", icon: Clock },
+            { label: "Completed",       count: done,     color: "text-emerald-600", bg: "bg-emerald-50", icon: CheckCircle },
           ].map((s, i) => (
             <motion.div
               key={s.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.1 }}
-              className="neon-card corner-bracket p-5 flex items-center gap-4"
-              style={{ borderColor: `${s.color}33` }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center gap-5 cursor-pointer transition-shadow hover:shadow-md"
             >
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                   style={{ background: `${s.color}12`, border: `1px solid ${s.color}30` }}>
-                <s.icon size={20} style={{ color: s.color, filter: `drop-shadow(0 0 6px ${s.color})` }} />
+              <div className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 ${s.bg}`}>
+                <s.icon size={26} className={s.color} />
               </div>
               <div>
-                <p style={{ fontFamily: "'Orbitron',monospace", fontSize: "1.8rem", fontWeight: 900, color: s.color, textShadow: `0 0 16px ${s.color}66` }}>
+                <p className={`text-4xl font-black title-font tracking-tight ${s.color}`}>
                   {s.count}
                 </p>
-                <p style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "10px", color: `${s.color}88`, letterSpacing: "1px" }}>
-                  {s.label.toUpperCase()}
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">
+                  {s.label}
                 </p>
               </div>
             </motion.div>
@@ -87,51 +91,57 @@ const Maintenance = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="neon-card corner-bracket p-6"
+          className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm overflow-hidden"
         >
-          <div className="flex items-center justify-between mb-5">
-            <p style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "10px", color: "rgba(0,245,255,0.5)", letterSpacing: "2px" }}>
-              // WORK ORDERS
-            </p>
-            <div className="hex-badge">6 TOTAL</div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-sm font-bold text-slate-800 uppercase tracking-widest flex items-center gap-2">
+              <Wrench size={16} className="text-slate-400" />
+              Work Order Queue
+            </h2>
+            <div className="flex gap-2">
+              <button className="clean-btn active">Filter: Priority</button>
+              <button className="clean-btn">My Tasks</button>
+            </div>
           </div>
 
           <div className="space-y-3">
             {schedule.map((item, i) => {
               const pCfg = priorityCfg[item.priority];
               const StatusIcon = statusIcon[item.status];
-              const sColor = statusColor[item.status];
+              const sColorClass = statusColor[item.status];
 
               return (
                 <motion.div
                   key={item.id}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.35 + i * 0.07 }}
-                  whileHover={{ x: 4 }}
-                  className="flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all"
-                  style={{
-                    background: item.status === "overdue" ? "rgba(255,34,68,0.06)" : "rgba(0,245,255,0.03)",
-                    border: `1px solid ${item.status === "overdue" ? "rgba(255,34,68,0.25)" : "rgba(0,245,255,0.1)"}`,
-                  }}
+                  transition={{ delay: 0.35 + i * 0.05 }}
+                  whileHover={{ scale: 1.01, translateX: 5 }}
+                  className={`flex items-center gap-5 px-5 py-4 rounded-xl cursor-pointer transition-all border shadow-sm ${
+                    item.status === "overdue" ? "bg-red-50/50 border-red-200" : "bg-white border-slate-200 hover:shadow-md hover:border-blue-200 hover:bg-blue-50/30"
+                  }`}
                 >
                   {/* Status icon */}
-                  <StatusIcon size={18} style={{ color: sColor, filter: `drop-shadow(0 0 4px ${sColor})`, flexShrink: 0 }} />
+                  <div className={`w-10 h-10 flex items-center justify-center rounded-lg bg-slate-50 border border-slate-100 flex-shrink-0`}>
+                    <StatusIcon size={20} className={sColorClass} />
+                  </div>
 
                   {/* WO ID + machine */}
-                  <div className="w-24 flex-shrink-0">
-                    <p style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "10px", color: "#00f5ff", letterSpacing: "0.5px" }}>{item.id}</p>
-                    <p style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "11px", color: "rgba(160,200,220,0.7)", marginTop: "1px" }}>{item.machine}</p>
+                  <div className="w-28 flex-shrink-0 border-r border-slate-100 pr-4">
+                    <p className="text-[11px] font-bold text-slate-500 tech-font bg-slate-100 px-2 py-0.5 rounded-sm inline-block mb-1">{item.id}</p>
+                    <p className="text-[12px] font-bold text-blue-600 block truncate">{item.machine}</p>
                   </div>
 
                   {/* Task */}
                   <div className="flex-1 min-w-0">
-                    <p style={{ fontFamily: "'Rajdhani',sans-serif", fontWeight: 600, fontSize: "14px", color: "#c0d8e8" }}>{item.task}</p>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "10px", color: "rgba(0,245,255,0.4)" }}>
-                        ⏱ {item.duration}
+                    <p className={`text-[15px] font-bold ${item.status === "overdue" ? "text-red-700" : "text-slate-800"}`}>
+                      {item.task}
+                    </p>
+                    <div className="flex items-center gap-4 mt-2">
+                      <span className="text-[11px] font-medium text-slate-500 font-mono flex items-center gap-1 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+                        <Clock size={12} className="text-slate-400" /> {item.duration}
                       </span>
-                      <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "10px", color: "rgba(0,245,255,0.4)" }}>
+                      <span className="text-[11px] font-medium text-slate-500 font-mono flex items-center gap-1 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
                         👤 {item.tech}
                       </span>
                     </div>
@@ -139,34 +149,21 @@ const Maintenance = () => {
 
                   {/* Priority badge */}
                   <span
-                    className="px-3 py-1 rounded text-xs flex-shrink-0"
-                    style={{
-                      fontFamily: "'Share Tech Mono',monospace",
-                      fontSize: "9px",
-                      background: `${pCfg.color}12`,
-                      color: pCfg.color,
-                      border: `1px solid ${pCfg.color}30`,
-                      letterSpacing: "1.5px",
-                    }}
+                    className={`px-3 py-1 rounded-md text-[10px] font-bold flex-shrink-0 border uppercase tracking-widest ${pCfg.bg} ${pCfg.color} ${pCfg.border}`}
                   >
                     {pCfg.label}
                   </span>
 
                   {/* Due */}
                   <span
-                    style={{
-                      fontFamily: "'Share Tech Mono',monospace",
-                      fontSize: "11px",
-                      color: item.status === "overdue" ? "#ff2244" : "rgba(0,245,255,0.5)",
-                      flexShrink: 0,
-                      minWidth: "80px",
-                      textAlign: "right",
-                    }}
+                    className={`text-xs font-bold font-mono min-w-[90px] text-right flex-shrink-0 ${
+                      item.status === "overdue" ? "text-red-600 bg-red-100 px-2 py-1 rounded" : "text-slate-500"
+                    }`}
                   >
                     {item.due}
                   </span>
 
-                  <ChevronRight size={14} style={{ color: "rgba(0,245,255,0.3)", flexShrink: 0 }} />
+                  <ChevronRight size={18} className="text-slate-300 ml-2" />
                 </motion.div>
               );
             })}
