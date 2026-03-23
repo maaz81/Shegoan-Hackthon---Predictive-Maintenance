@@ -151,7 +151,7 @@ const Dashboard = () => {
           <Card title="Total Machines" value="12" change="+2%" icon={Cpu} color="blue" subtitle="04 offline" />
           <Card title="Active Alerts" value="3" change="-1%" icon={AlertTriangle} color="yellow" subtitle="02 critical" />
           <Card title="Critical Issues" value="1" change="+0.5%" icon={Zap} color="red" subtitle="Immediate action" />
-          <Card title="Uptime Score" value="94%" change="+3%" icon={Activity} color="green" subtitle="Last 30 days" />
+          {/* <Card title="Uptime Score" value="94%" change="+3%" icon={Activity} color="green" subtitle="Last 30 days" /> */}
         </div>
 
         {/* Main Content Grid */}
@@ -171,11 +171,11 @@ const Dashboard = () => {
                 <h2 className="text-lg font-bold text-slate-800">Machine Health Analytics</h2>
                 <p className="text-xs font-medium text-slate-400 mt-1">12-hour historical performance aggregate</p>
               </div>
-              <div className="flex gap-2">
+              {/* <div className="flex gap-2">
                 <button className="clean-btn active">12H</button>
                 <button className="clean-btn">24H</button>
                 <button className="clean-btn">7D</button>
-              </div>
+              </div> */}
             </div>
 
             {/* Chart */}
@@ -185,7 +185,7 @@ const Dashboard = () => {
 
             {/* X labels */}
             <div className="flex justify-between mt-3 px-2">
-              {["00:00","02:00","04:00","06:00","08:00","10:00","12:00","14:00","16:00","18:00","20:00","22:00"].map(l => (
+              {["00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"].map(l => (
                 <span key={l} className="text-[10px] font-bold text-slate-400">{l}</span>
               ))}
             </div>
@@ -202,12 +202,12 @@ const Dashboard = () => {
               <h2 className="text-lg font-bold text-slate-800">KPI Metrics</h2>
               <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider bg-slate-100 px-2 py-1 rounded">Avg</span>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <RingGauge value={87} color="#06b6d4" label="TEMPERATURE" />
               <RingGauge value={62} color="#10b981" label="VIBRATION" />
               <RingGauge value={91} color="#f59e0b" label="PRESSURE" />
-              <RingGauge value={44} color="#ef4444" label="WEAR LEVEL" />
+              <RingGauge value={44} color="#ef4444" label="RPM" />
             </div>
           </motion.div>
         </div>
@@ -216,7 +216,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-3 gap-6">
 
           {/* Machine Status Live */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
@@ -233,7 +233,7 @@ const Dashboard = () => {
               <TickerLine label="Conveyor Main" value="12.4 A" color="#3b82f6" />
               <TickerLine label="Exhaust Turbines" value="1440 RPM" color="#3b82f6" />
             </div>
-          </motion.div>
+          </motion.div> */}
 
           {/* Recent Alerts */}
           <motion.div
@@ -257,26 +257,23 @@ const Dashboard = () => {
                 <motion.div
                   key={i}
                   whileHover={{ x: 4, scale: 1.01 }}
-                  className={`p-3 rounded-xl cursor-pointer shadow-sm border ${
-                    a.level === "critical" ? "bg-red-50 border-red-200" : 
-                    a.level === "warning" ? "bg-amber-50 border-amber-200" : 
-                    "bg-blue-50 border-blue-200"
-                  }`}
+                  className={`p-3 rounded-xl cursor-pointer shadow-sm border ${a.level === "critical" ? "bg-red-50 border-red-200" :
+                    a.level === "warning" ? "bg-amber-50 border-amber-200" :
+                      "bg-blue-50 border-blue-200"
+                    }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border bg-white ${
-                        a.level === "critical" ? "text-red-600 border-red-200" : 
-                        a.level === "warning" ? "text-amber-600 border-amber-200" : 
-                        "text-blue-600 border-blue-200"
-                      }`}>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border bg-white ${a.level === "critical" ? "text-red-600 border-red-200" :
+                        a.level === "warning" ? "text-amber-600 border-amber-200" :
+                          "text-blue-600 border-blue-200"
+                        }`}>
                         {a.tag}
                       </span>
-                      <p className={`text-xs font-bold ${
-                        a.level === "critical" ? "text-red-700" : 
-                        a.level === "warning" ? "text-amber-700" : 
-                        "text-blue-700"
-                      }`}>
+                      <p className={`text-xs font-bold ${a.level === "critical" ? "text-red-700" :
+                        a.level === "warning" ? "text-amber-700" :
+                          "text-blue-700"
+                        }`}>
                         {a.msg}
                       </p>
                     </div>
@@ -290,15 +287,15 @@ const Dashboard = () => {
           </motion.div>
 
           {/* AI Insight */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
             whileHover={{ scale: 1.02 }}
             className="neon-card p-6 relative overflow-hidden group cursor-pointer border-purple-200 bg-gradient-to-br from-white to-purple-50"
-          >
-            {/* Purple glow gradient */}
-            <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-20 bg-purple-400 blur-3xl group-hover:scale-150 transition-transform duration-500" />
+          > */}
+          {/* Purple glow gradient */}
+          {/* <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-20 bg-purple-400 blur-3xl group-hover:scale-150 transition-transform duration-500" />
 
             <div className="flex items-center gap-2 mb-4 relative z-10">
               <div className="p-2 bg-purple-100 rounded-lg border border-purple-200">
@@ -325,7 +322,7 @@ const Dashboard = () => {
                 Model v3.1 · Updated just now
               </span>
             </div>
-          </motion.div>
+          </motion.div> */}
         </div>
       </div>
     </motion.div>

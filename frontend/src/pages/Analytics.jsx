@@ -30,12 +30,12 @@ const machines = [
   { id: "MACH-B", name: "Motor Unit B", temp: 67, vibr: 3.2, pressure: 4.1, current: 12.8, health: 55, status: "critical" },
   { id: "MACH-C", name: "Coolant System", temp: 55, vibr: 0.8, pressure: 4.3, current: 10.5, health: 94, status: "ok" },
   { id: "MACH-D", name: "Conveyor Main", temp: 71, vibr: 1.4, pressure: 3.9, current: 13.1, health: 81, status: "ok" },
-  { id: "MACH-E", name: "Exhaust Turbines", temp: 90, vibr: 0.6, pressure: 2.7, current: 9.8,  health: 48, status: "critical" },
+  { id: "MACH-E", name: "Exhaust Turbines", temp: 90, vibr: 0.6, pressure: 2.7, current: 9.8, health: 48, status: "critical" },
 ];
 
 const statusStyle = {
-  ok:       { color: "#059669", bg: "bg-emerald-50", border: "border-emerald-200", label: "NOMINAL" },
-  warning:  { color: "#d97706", bg: "bg-amber-50", border: "border-amber-200", label: "WARNING" },
+  ok: { color: "#059669", bg: "bg-emerald-50", border: "border-emerald-200", label: "NOMINAL" },
+  warning: { color: "#d97706", bg: "bg-amber-50", border: "border-amber-200", label: "WARNING" },
   critical: { color: "#dc2626", bg: "bg-red-50", border: "border-red-200", label: "CRITICAL" },
 };
 
@@ -93,9 +93,9 @@ const Analytics = () => {
         <div className="grid grid-cols-4 gap-6">
           {[
             { label: "FLEET HEALTH AVG", value: "70%", color: "text-cyan-600", bg: "bg-cyan-50", icon: Activity },
-            { label: "AVG TEMP",   value: "73°C",  color: "text-red-500", bg: "bg-red-50", icon: Thermometer },
-            { label: "AVG VIBRATION",   value: "1.6 mm/s", color: "text-amber-500", bg: "bg-amber-50", icon: BarChart3 },
-            { label: "OVERALL TREND",      value: "↑ +3%",    color: "text-emerald-500", bg: "bg-emerald-50", icon: TrendingUp },
+            { label: "AVG TEMP", value: "73°C", color: "text-red-500", bg: "bg-red-50", icon: Thermometer },
+            { label: "AVG VIBRATION", value: "1.6 mm/s", color: "text-amber-500", bg: "bg-amber-50", icon: BarChart3 },
+            // { label: "OVERALL TREND",      value: "↑ +3%",    color: "text-emerald-500", bg: "bg-emerald-50", icon: TrendingUp },
           ].map((s, i) => (
             <motion.div
               key={s.label}
@@ -142,7 +142,7 @@ const Analytics = () => {
                   <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Temp</th>
                   <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Vibration</th>
                   <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Health Score</th>
-                  <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Trend (10m)</th>
+                  {/* <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Trend (10m)</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -196,11 +196,11 @@ const Analytics = () => {
                       </td>
 
                       {/* Sparkline */}
-                      <td className="px-4 py-4">
+                      {/* <td className="px-4 py-4">
                         <div className="opacity-70 group-hover:opacity-100 transition-opacity">
                           <Sparkline data={m.history} color={healthColor} />
                         </div>
-                      </td>
+                      </td> */}
                     </motion.tr>
                   );
                 })}
