@@ -3,6 +3,7 @@ import Dashboard from "./pages/Dashboard";
 import Analytics from "./pages/Analytics";
 import Alerts from "./pages/Alerts";
 import Maintenance from "./pages/Maintenance";
+import Test from "./pages/Test";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/alerts" element={<Alerts />} />
         <Route path="/maintenance" element={<Maintenance />} />
+        <Route path="/test" element={<Test />} />
       </Routes>
     </BrowserRouter>
   );

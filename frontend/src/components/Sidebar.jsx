@@ -24,6 +24,7 @@ const Sidebar = () => {
     { name: "Analytics", icon: BarChart3, path: "/analytics" },
     { name: "Alerts", icon: AlertTriangle, path: "/alerts" },
     { name: "Maintenance", icon: Wrench, path: "/maintenance" },
+    { name: "Test", icon: Wrench, path: "/test" }
   ];
 
   const formatTime = (d) =>
@@ -83,11 +84,10 @@ const Sidebar = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
-                isActive
-                  ? "sidebar-item-active shadow-sm"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
-              }`}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${isActive
+                ? "sidebar-item-active shadow-sm"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+                }`}
             >
               <Icon
                 size={18}
