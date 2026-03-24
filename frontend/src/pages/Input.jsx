@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const API = "http://127.0.0.1:8000";
 
@@ -8,6 +9,7 @@ function Input() {
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const [preview, setPreview] = useState([]);
+    const navigate = useNavigate();
 
     const handleFile = (f) => {
         if (!f || !f.name.endsWith(".csv")) {
@@ -44,7 +46,13 @@ function Input() {
             });
 
             await res.json();
-            setMessage("File uploaded successfully ✅");
+            setMessage("File uploaded! Redirecting to Dashboard... 🚀");
+            
+            // Redirect to Dashboard after 1.5 seconds to show the analysis
+            setTimeout(() => {
+                navigate("/");
+            }, 1500);
+            
         } catch (err) {
             setMessage("Upload failed ❌");
         }

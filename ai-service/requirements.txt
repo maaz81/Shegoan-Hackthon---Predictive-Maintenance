@@ -5,4 +5,5 @@ python-dotenv
 pandas
 scikit-learn
 joblib
-pydantic
+pydantic
+python-multipart

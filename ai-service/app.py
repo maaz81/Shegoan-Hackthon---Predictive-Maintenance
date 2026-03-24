@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
 from rule_engine import rule_analysis
 from ml_model import predict_failure
@@ -6,6 +6,7 @@ from nlp_engine import generate_explanation, generate_maintenance_plan
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import os
+import shutil
 
 app = FastAPI()
 
@@ -78,6 +79,19 @@ def analyze(data: InputData):
         "explanation":       explanation,       # LLM 1 output
         "maintenance_plan":  maintenance_plan,  # LLM 2 output
     }
+
+
+# ── POST /upload ──────────────────────────────────────────────────────────────
+@app.post("/upload")
+async def upload_csv(file: UploadFile = File(...)):
+    if not file.filename.endswith(".csv"):
+        return {"error": "Only CSV files are allowed"}
+        
+    CSV_PATH = os.path.join(os.path.dirname(__file__), "dataset.csv")
+    with open(CSV_PATH, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    return get_machines()
 
 
 # ── GET /machines ─────────────────────────────────────────────────────────────
