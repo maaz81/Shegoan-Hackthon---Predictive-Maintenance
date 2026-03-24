@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from rule_engine import rule_analysis
 from ml_model import predict_failure
-from nlp_engine import generate_explanation
+from nlp_engine import generate_explanation, generate_maintenance_plan
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import os
@@ -24,6 +24,7 @@ class InputData(BaseModel):
     temp: float
     vibration: float
     rpm: float
+    machine_type: str = "Machine"   # optional — used by LLM 2
 
 
 # ── Helper ────────────────────────────────────────────────────────────────────
@@ -35,42 +36,59 @@ def get_final_risk(rule_risk, ml_risk):
 # ── POST /analyze ─────────────────────────────────────────────────────────────
 @app.post("/analyze")
 def analyze(data: InputData):
+    # Step 1: Rule engine
     rule_risk, rule_reason = rule_analysis(data.log)
+
+    # Step 2: ML model
     ml_risk = predict_failure(data.temp, data.vibration, data.rpm)
 
+    # Step 3: Final risk (highest wins)
     final_risk = get_final_risk(rule_risk, ml_risk)
-    explanation = generate_explanation(data.log, final_risk)
+
+    # Step 4: LLM 1 — Diagnosis explanation (gemma-3n)
+    explanation = generate_explanation(
+        log=data.log,
+        risk=final_risk,
+        temp=data.temp,
+        vibration=data.vibration,
+        rpm=data.rpm,
+    )
+
+    # Step 5: LLM 2 — Maintenance plan (mistral-7b)
+    maintenance_plan = generate_maintenance_plan(
+        machine_type=data.machine_type,
+        risk=final_risk,
+        issue=rule_reason,
+        temp=data.temp,
+        vibration=data.vibration,
+        rpm=data.rpm,
+    )
 
     return {
-        "machine_status": final_risk,
-        "rule_based": rule_risk,
-        "ml_prediction": ml_risk,
-        "issue": rule_reason,
-        "confidence": 0.85,
+        "machine_status":    final_risk,
+        "rule_based":        rule_risk,
+        "ml_prediction":     ml_risk,
+        "issue":             rule_reason,
+        "confidence":        0.85,
         "recommended_action": (
             "Immediate inspection required" if final_risk == "High"
-            else "Schedule maintenance soon" if final_risk == "Medium"
+            else "Schedule maintenance soon"  if final_risk == "Medium"
             else "Monitor system"
         ),
-        "explanation": explanation,
+        "explanation":       explanation,       # LLM 1 output
+        "maintenance_plan":  maintenance_plan,  # LLM 2 output
     }
 
 
 # ── GET /machines ─────────────────────────────────────────────────────────────
 @app.get("/machines")
 def get_machines():
-    """
-    Reads dataset.csv, picks the LATEST reading per machine,
-    and returns all machines ready to be sent to /analyze.
-    """
     CSV_PATH = os.path.join(os.path.dirname(__file__), "dataset.csv")
     df = pd.read_csv(CSV_PATH)
 
-    # Drop rows missing critical sensor values
     df.dropna(subset=["vibration_rms", "temperature_motor", "rpm"], inplace=True)
-
-    # Latest reading per machine
     df["timestamp"] = pd.to_datetime(df["timestamp"])
+
     latest = (
         df.sort_values("timestamp")
           .groupby("machine_id")
@@ -86,7 +104,6 @@ def get_machines():
         vibration    = float(row["vibration_rms"])
         rpm          = float(row["rpm"])
 
-        # Same logic as generate_logs.py
         if temp > 300 and vibration > 0.8:
             log = f"{machine_type} shows high temperature and severe vibration at high RPM"
         elif vibration > 0.8:

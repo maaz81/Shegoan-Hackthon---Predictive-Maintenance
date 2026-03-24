@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "../Test.css";
 
 const API_URL = "http://localhost:8000";
 
@@ -10,99 +9,46 @@ const DEFAULT_FORM = {
     rpm: "",
 };
 
-const RISK_CONFIG = {
-    High: { cls: "risk-high", label: "HIGH RISK", icon: "▲" },
-    Medium: { cls: "risk-medium", label: "MEDIUM RISK", icon: "◆" },
-    Low: { cls: "risk-low", label: "LOW RISK", icon: "●" },
+const RISK_STYLES = {
+    High: "bg-red-50 text-red-600 border-red-200",
+    Medium: "bg-yellow-50 text-yellow-600 border-yellow-200",
+    Low: "bg-green-50 text-green-600 border-green-200",
 };
 
-function StatusBadge({ level }) {
-    const cfg = RISK_CONFIG[level] || RISK_CONFIG["Low"];
+function Badge({ level }) {
     return (
-        <span className={`badge ${cfg.cls}`}>
-            {cfg.icon} {cfg.label}
+        <span
+            className={`px-3 py-1 text-xs font-semibold border rounded-md ${RISK_STYLES[level] || RISK_STYLES.Low}`}
+        >
+            {level.toUpperCase()}
         </span>
     );
 }
 
-function ConfidenceBar({ value }) {
-    const pct = Math.round(value * 100);
+function Input({ label, value, onChange, placeholder, textarea }) {
     return (
-        <div className="confidence-wrap">
-            <div className="confidence-label">
-                <span>Model Confidence</span>
-                <span className="confidence-pct">{pct}%</span>
-            </div>
-            <div className="confidence-track">
-                <div className="confidence-fill" style={{ width: `${pct}%` }} />
-            </div>
-        </div>
-    );
-}
+        <div className="flex flex-col gap-1">
+            <label className="text-xs text-gray-500 uppercase tracking-wide">
+                {label}
+            </label>
 
-function MetricInput({ label, id, value, onChange, placeholder, type = "number" }) {
-    return (
-        <div className="field">
-            <label htmlFor={id}>{label}</label>
-            {type === "textarea" ? (
+            {textarea ? (
                 <textarea
-                    id={id}
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
                     rows={3}
+                    className="bg-white border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
                 />
             ) : (
                 <input
-                    id={id}
                     type="number"
-                    step="any"
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
+                    className="bg-white border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
                 />
             )}
-        </div>
-    );
-}
-
-function ResultPanel({ data }) {
-    return (
-        <div className="result-panel">
-            <div className="result-header">
-                <div>
-                    <p className="result-header-sub">MACHINE STATUS</p>
-                    <StatusBadge level={data.machine_status} />
-                </div>
-                <div className="result-action-box">
-                    <p className="result-header-sub">RECOMMENDED ACTION</p>
-                    <p className="result-action">{data.recommended_action}</p>
-                </div>
-            </div>
-
-            <div className="result-grid">
-                <div className="metric-card">
-                    <span className="metric-label">Rule-Based</span>
-                    <StatusBadge level={data.rule_based} />
-                </div>
-                <div className="metric-card">
-                    <span className="metric-label">ML Prediction</span>
-                    <StatusBadge level={data.ml_prediction} />
-                </div>
-                <div className="metric-card metric-wide">
-                    <span className="metric-label">Detected Issue</span>
-                    <span className="metric-value">{data.issue}</span>
-                </div>
-            </div>
-
-            <ConfidenceBar value={data.confidence} />
-
-            <div className="explanation-box">
-                <p className="explanation-label">
-                    <span className="dot" /> AI Explanation
-                </p>
-                <p className="explanation-text">{data.explanation}</p>
-            </div>
         </div>
     );
 }
@@ -118,6 +64,7 @@ export default function Test() {
 
     const handleSubmit = async () => {
         const { log, temp, vibration, rpm } = form;
+
         if (!log || temp === "" || vibration === "" || rpm === "") {
             setError("All fields are required.");
             return;
@@ -139,124 +86,166 @@ export default function Test() {
                 }),
             });
 
-            if (!res.ok) throw new Error(`Server error: ${res.status}`);
             const data = await res.json();
             setResult(data);
         } catch (err) {
-            setError(err.message || "Failed to connect to the server.");
+            setError("Failed to connect to server.");
         } finally {
             setLoading(false);
         }
     };
 
-    const handleReset = () => {
-        setForm(DEFAULT_FORM);
-        setResult(null);
-        setError(null);
-    };
-
     return (
-        <div className="app">
-            <header className="header">
-                <div className="header-inner">
-                    <div className="logo">
-                        <span className="logo-icon">⬡</span>
-                        <span className="logo-text">MachineGuard</span>
-                    </div>
-                    <p className="header-sub">Predictive Failure Detection System</p>
-                </div>
-                <div className="header-status">
-                    <span className="live-dot" />
-                    LIVE MONITOR
+        <div className="min-h-screen bg-gray-50 text-gray-800">
+
+            {/* Header */}
+            <header className="bg-white border-b border-gray-200">
+                <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+                    <h1 className="text-lg font-bold tracking-wide text-gray-800">
+                        MachineGuard
+                    </h1>
+                    <span className="text-xs text-green-600 font-medium">
+                        ● LIVE
+                    </span>
                 </div>
             </header>
 
-            <main className="main">
-                <section className="form-section">
-                    <div className="section-title">
-                        <span className="section-num">01</span> Sensor Input
-                    </div>
+            {/* Main */}
+            <main className="max-w-6xl mx-auto p-6 grid md:grid-cols-2 gap-6">
 
-                    <MetricInput
+                {/* Form Card */}
+                <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                    <h2 className="text-sm font-semibold text-gray-500 mb-4">
+                        SENSOR INPUT
+                    </h2>
+
+                    <Input
                         label="Machine Log"
-                        id="log"
                         value={form.log}
                         onChange={handleChange("log")}
-                        placeholder="e.g. Motor X shows abnormal vibration at high RPM..."
-                        type="textarea"
+                        placeholder="Motor shows abnormal vibration..."
+                        textarea
                     />
 
-                    <div className="row-3">
-                        <MetricInput
-                            label="Temperature (°C)"
-                            id="temp"
+                    <div className="grid grid-cols-3 gap-3 mt-4">
+                        <Input
+                            label="Temp (°C)"
                             value={form.temp}
                             onChange={handleChange("temp")}
-                            placeholder="e.g. 320"
+                            placeholder="320"
                         />
-                        <MetricInput
+                        <Input
                             label="Vibration (g)"
-                            id="vibration"
                             value={form.vibration}
                             onChange={handleChange("vibration")}
-                            placeholder="e.g. 0.9"
+                            placeholder="0.9"
                         />
-                        <MetricInput
+                        <Input
                             label="RPM"
-                            id="rpm"
                             value={form.rpm}
                             onChange={handleChange("rpm")}
-                            placeholder="e.g. 3500"
+                            placeholder="3500"
                         />
                     </div>
 
-                    {error && <div className="error-box">{error}</div>}
+                    {error && (
+                        <div className="mt-4 text-sm text-red-600 bg-red-50 border border-red-200 p-2 rounded">
+                            {error}
+                        </div>
+                    )}
 
-                    <div className="btn-row">
+                    <div className="flex gap-3 mt-6">
                         <button
-                            className="btn-primary"
                             onClick={handleSubmit}
-                            disabled={loading}
+                            className="flex-1 bg-amber-500 text-white font-medium py-2 rounded-md hover:bg-amber-600 transition"
                         >
-                            {loading ? (
-                                <>
-                                    <span className="spinner" /> Analyzing...
-                                </>
-                            ) : (
-                                "Run Analysis"
-                            )}
+                            {loading ? "Analyzing..." : "Run Analysis"}
                         </button>
-                        <button className="btn-ghost" onClick={handleReset}>
+
+                        <button
+                            onClick={() => {
+                                setForm(DEFAULT_FORM);
+                                setResult(null);
+                            }}
+                            className="border border-gray-300 px-4 rounded-md hover:bg-gray-100"
+                        >
                             Reset
                         </button>
                     </div>
-                </section>
+                </div>
 
-                <section className="result-section">
-                    <div className="section-title">
-                        <span className="section-num">02</span> Analysis Result
-                    </div>
+                {/* Result Card */}
+                <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                    <h2 className="text-sm font-semibold text-gray-500 mb-4">
+                        ANALYSIS RESULT
+                    </h2>
 
                     {!result && !loading && (
-                        <div className="empty-state">
-                            <div className="empty-icon">◎</div>
-                            <p>Submit sensor data to see the analysis</p>
-                        </div>
+                        <p className="text-gray-400 text-sm text-center py-20">
+                            Submit data to view results
+                        </p>
                     )}
 
                     {loading && (
-                        <div className="empty-state">
-                            <div className="pulse-ring" />
-                            <p>Running ML + Rule Engine...</p>
-                        </div>
+                        <p className="text-center text-gray-400 py-20">
+                            Running ML analysis...
+                        </p>
                     )}
 
-                    {result && <ResultPanel data={result} />}
-                </section>
+                    {result && (
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                                <Badge level={result.machine_status} />
+                                <span className="text-sm text-gray-500">
+                                    {result.recommended_action}
+                                </span>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="p-3 border border-gray-200 rounded">
+                                    <p className="text-xs text-gray-500">Rule-Based</p>
+                                    <Badge level={result.rule_based} />
+                                </div>
+
+                                <div className="p-3 border border-gray-200 rounded">
+                                    <p className="text-xs text-gray-500">ML Prediction</p>
+                                    <Badge level={result.ml_prediction} />
+                                </div>
+                            </div>
+
+                            <div className="p-3 border border-gray-200 rounded">
+                                <p className="text-xs text-gray-500">Detected Issue</p>
+                                <p className="text-sm">{result.issue}</p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-gray-500 mb-1">
+                                    Confidence ({Math.round(result.confidence * 100)}%)
+                                </p>
+                                <div className="w-full bg-gray-200 h-2 rounded">
+                                    <div
+                                        className="bg-amber-500 h-2 rounded"
+                                        style={{ width: `${result.confidence * 100}%` }}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="bg-gray-50 border border-gray-200 p-4 rounded">
+                                <p className="text-xs text-amber-600 mb-2">
+                                    AI Explanation
+                                </p>
+                                <p className="text-sm text-gray-700">
+                                    {result.explanation}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </main>
 
-            <footer className="footer">
-                MachineGuard v1.0 · Powered by FastAPI + RandomForest + OpenRouter
+            {/* Footer */}
+            <footer className="text-center text-xs text-gray-400 py-4 border-t border-gray-200">
+                MachineGuard v1.0 · FastAPI + RandomForest
             </footer>
         </div>
     );

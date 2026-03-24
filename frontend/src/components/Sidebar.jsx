@@ -22,9 +22,10 @@ const Sidebar = () => {
   const menu = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/" },
     { name: "Analytics", icon: BarChart3, path: "/analytics" },
-    { name: "Alerts", icon: AlertTriangle, path: "/alerts" },
-    { name: "Maintenance", icon: Wrench, path: "/maintenance" },
-    { name: "Test", icon: Wrench, path: "/test" }
+    // { name: "Alerts", icon: AlertTriangle, path: "/alerts" },
+    // { name: "Maintenance", icon: Wrench, path: "/maintenance" },
+    { name: "Test", icon: Wrench, path: "/test" },
+    { name: "Add .csv File", icon: Wrench, path: "/input" }
   ];
 
   const formatTime = (d) =>
